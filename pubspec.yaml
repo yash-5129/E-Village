@@ -54,6 +54,7 @@ dependencies:
   carousel_slider: ^4.2.1
   slider: ^0.0.1
   flutter_slidable: ^2.0.0
+  full_screen_image_null_safe: ^2.0.0
 
 dev_dependencies:
   flutter_test:

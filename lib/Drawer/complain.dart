@@ -197,19 +197,6 @@ class _ComplainState extends State<Complain> {
                   ),
                 ),
               ),
-
-              // Row(
-              //   mainAxisAlignment: MainAxisAlignment.start,
-              //   children: [
-              //     Padding(
-              //       padding: const EdgeInsets.fromLTRB(11, 20, 0, 0),
-              //       child: Text(
-              //         "Write short discription",
-              //         textAlign: TextAlign.start,
-              //       ),
-              //     ),
-              //   ],
-              // ),
               SizedBox(
                 // height: 200,
                 width: 350,

@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:practice/CategoryScreen.dart';
 import 'package:practice/login.dart';
 import 'Drawer/setting.dart';
@@ -50,9 +51,13 @@ class _HomePageState extends State<HomePage> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
+          centerTitle: true,
           toolbarHeight: 70,
           backgroundColor: Color(0xff3957ed),
-          title: Text("Village Management System"),
+          title: Text("E-Village",style: GoogleFonts.alike(
+            textStyle:
+            TextStyle(fontSize: 23),
+          ),),
         ),
         body: container,
         drawer: Drawer(

@@ -1,12 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
-import 'package:get/get.dart';
+import 'package:full_screen_image_null_safe/full_screen_image_null_safe.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:practice/Drawer/update.dart';
-import 'package:practice/ExpenseForm.dart';
-import 'package:practice/secretory/Drawer/userdetails.dart';
+
 
 class SDashboardPage extends StatefulWidget {
   const SDashboardPage({Key? key}) : super(key: key);
@@ -89,12 +85,14 @@ class _SDashboardPage extends State<SDashboardPage> {
                                                             left: 100,
                                                             bottom: 10),
                                                     child: ClipOval(
-                                                        child: Image(
+                                                        child: FullScreenWidget(
+                                                          child: Image(
                                                       image: NetworkImage(
-                                                          snapshot.data!.docs[i]['userimage']),
+                                                            snapshot.data!.docs[i]['userimage']),
                                                       width: 100,
                                                       height: 100,
-                                                    )),
+                                                    ),
+                                                        )),
                                                   ),
                                                   Divider(
                                                     thickness: 2,
