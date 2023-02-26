@@ -23,8 +23,8 @@ class UpdatePage extends StatefulWidget {
 }
 
 class _UpdatePageState extends State<UpdatePage> {
-  bool obsure = true
-  ;
+  bool obsure = true;
+  bool isLoading = false;
   late String email;
   late String path;
   final _formkey = GlobalKey<FormState>();
@@ -450,8 +450,17 @@ class _UpdatePageState extends State<UpdatePage> {
                                             return;
                                           }
                                           try{
+                                            setState(() {
+                                              isLoading = true;
+                                            });
+                                            Future.delayed(const Duration(seconds: 10), () {
+                                              setState(() {
+                                                isLoading = false;
+                                              });
+                                            });
                                             await ref.putFile(imageFile!);
                                             imageurl=await ref.getDownloadURL();
+
                                           }catch(error)
                                           {
                                             print("error in photo");
@@ -474,21 +483,26 @@ class _UpdatePageState extends State<UpdatePage> {
                                             _addController.text = '';
                                             Navigator.pushNamed(
                                                 context, 'home');
+                                          // we had used future delayed to stop loading after
+                                          // 3 seconds and show text "submit" on the screen.
 
                                         },
-                                        style: ButtonStyle(
-                                          backgroundColor:
-                                              MaterialStateColor.resolveWith(
-                                                  (states) =>
-                                                      Color(0xff3957ed)),
-                                        ),
-                                        child: Text(
-                                          "Update Details",
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16,
-                                          ),
-                                        ),
+                                        child: isLoading
+                                            ? Row(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          // as elevated button gets clicked we will see text"Loading..."
+                                          // on the screen with circular progress indicator white in color.
+                                          //as loading gets stopped "Submit" will be displayed
+                                          children: const [
+                                            // Text('Loading...', style: TextStyle(fontSize: 20),),
+                                            SizedBox(
+                                              width: 10,
+                                            ),
+                                            CircularProgressIndicator(
+                                                color: Colors.white),
+                                          ],
+                                        )
+                                            : const Text('Update Details'),
                                       ),
                                     ],
                                   )

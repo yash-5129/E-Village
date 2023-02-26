@@ -9,7 +9,6 @@ import 'package:practice/secretory/Drawer/scontacts.dart';
 import 'package:practice/secretory/Drawer/sdashboard.dart';
 import 'package:practice/secretory/Drawer/sdrawer.dart';
 import 'package:practice/secretory/Drawer/sschooldata.dart';
-import 'package:practice/secretory/Drawer/update.dart';
 import 'package:practice/secretory/secretarylogin.dart';
 
 class SHomePage extends StatefulWidget {
