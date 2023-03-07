@@ -107,25 +107,6 @@ class _MyRegisterState extends State<MyRegister> {
                   ElevatedButton.icon(
                     onPressed: () async {
                       _getFromGallery();
-                      // final results = await FilePicker.platform.pickFiles(
-                      //   allowMultiple: false,
-                      //   allowedExtensions: ['png', 'jpg'],
-                      //   type: FileType.custom,
-                      // );
-                      // if (results == null) {
-                      //   ScaffoldMessenger.of(context).showSnackBar(
-                      //     const SnackBar(
-                      //       content: Text('No file selected.'),
-                      //     ), // SnackBar
-                      //   );
-                      //   return null;
-                      // }
-                      // path = results.files.single.path!;
-                      // final fileName = results.files.single.name;
-                      //
-                      // // upload(path,fileName);
-                      // print(path);
-                      // print(fileName);
                     },
                     icon: const Icon(Icons.image),
                     label: const Text("GALLERY"),
@@ -249,7 +230,7 @@ class _MyRegisterState extends State<MyRegister> {
                         },
                         validator: (value) {
                           if (value!.isEmpty) {
-                            return '*Required field ';
+                            return '* Required ';
                           }
                         },
                         style: TextStyle(
@@ -276,11 +257,14 @@ class _MyRegisterState extends State<MyRegister> {
                       ),
 
                     ),
-                    SizedBox(height: 10),
+                    SizedBox(height: 5),
                     Container(
                       padding:
                           EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                       child: TextFormField(
+                        minLines: 2, // any number you need (It works as the rows for the textarea)
+                        keyboardType: TextInputType.multiline,
+                        maxLines: null,
                         onChanged: (value) {
                           address = value;
                         },
@@ -291,7 +275,7 @@ class _MyRegisterState extends State<MyRegister> {
                         ),
                         validator: (value) {
                           if (value!.isEmpty) {
-                            return '*Required field ';
+                            return '* Required';
                           }
                         },
                         decoration: InputDecoration(
@@ -315,6 +299,7 @@ class _MyRegisterState extends State<MyRegister> {
                             )),
                       ),
                     ),
+                    SizedBox(height: 5),
                     Container(
                       padding:
                           EdgeInsets.symmetric(horizontal: 10, vertical: 5),
@@ -329,7 +314,7 @@ class _MyRegisterState extends State<MyRegister> {
                         ),
                         validator: (value) {
                           if (value!.isEmpty) {
-                            return '*Required field ';
+                            return '* Required';
                           }
                         },
                         keyboardType: TextInputType.number,
@@ -351,14 +336,16 @@ class _MyRegisterState extends State<MyRegister> {
                             )),
                       ),
                     ),
+                    SizedBox(height: 5),
+
                     Container(
                       padding:
                           EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                       child: TextFormField(
                         validator: (value) {
                           if (value!.isEmpty) {
-                            return '*Required field';
-                          } else if (value.length > 10) {
+                            return '* Required';
+                          } else if (value.length != 10) {
                             return '*Phone number must be of 10 digits';
                           }
                         },
@@ -389,7 +376,7 @@ class _MyRegisterState extends State<MyRegister> {
                             )),
                       ),
                     ),
-                    SizedBox(height: 10),
+                    SizedBox(height: 5),
                     Container(
                       padding:
                           EdgeInsets.symmetric(horizontal: 10, vertical: 5),
@@ -404,7 +391,7 @@ class _MyRegisterState extends State<MyRegister> {
                         ),
                         validator: (value) {
                           if (value!.isEmpty) {
-                            return '*Required field';
+                            return '* Required';
                           }
                         },
                         decoration: InputDecoration(
@@ -425,7 +412,7 @@ class _MyRegisterState extends State<MyRegister> {
                             )),
                       ),
                     ),
-                    SizedBox(height: 10),
+                    SizedBox(height: 5),
                     Container(
                       padding:
                           EdgeInsets.symmetric(horizontal: 10, vertical: 5),
@@ -441,7 +428,7 @@ class _MyRegisterState extends State<MyRegister> {
                         ),
                         validator: (value) {
                           if (value!.isEmpty) {
-                            return '*Required field';
+                            return '* Required';
                           } else if (value.length != 6) {
                             return '*Password must has 6 digits';
                           }

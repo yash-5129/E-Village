@@ -72,7 +72,7 @@ class _MySecretary extends State<MySecretary> {
                         ),
                         validator: (value) {
                           if(value!.isEmpty){
-                            return'*Required field';
+                            return'* Required';
                           }
                         },
                         decoration: InputDecoration(
@@ -113,7 +113,7 @@ class _MySecretary extends State<MySecretary> {
                         ),
                         validator: (value) {
                           if(value!.isEmpty){
-                            return'*Required field';
+                            return'* Required';
                           }
                         },
                         decoration: InputDecoration(

@@ -4,7 +4,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:practice/Events/navratri.dart';
-import 'package:practice/Drawer/newsdetail.dart';
 import 'package:practice/Drawer/Forget.dart';
 import 'package:practice/register.dart';
 import 'package:practice/theme_model.dart';
@@ -49,7 +48,7 @@ class MyApp extends StatelessWidget {
       'login': (context) => MyLogin(),
       'home': (context) => HomePage(),
       'event1':(context) => ED(),
-      'news1':(context) => ND(),
+     // 'news1':(context) => ND(),
       'update' :(context)=>UpdatePage(title: '',),
       'forget' :(context)=>Forget(),
 

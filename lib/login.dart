@@ -71,7 +71,7 @@ class _MyLoginState extends State<MyLogin> {
                       ),
                       validator: (value) {
                         if(value!.isEmpty){
-                          return'*Required field';
+                          return'* Required';
                         }
                       },
                       decoration: InputDecoration(
@@ -112,7 +112,7 @@ class _MyLoginState extends State<MyLogin> {
                       ),
                       validator: (value) {
                         if(value!.isEmpty){
-                          return'*Required field';
+                          return'* Required';
                         }
                       },
                       decoration: InputDecoration(

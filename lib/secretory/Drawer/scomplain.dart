@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:full_screen_image_null_safe/full_screen_image_null_safe.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -26,13 +27,32 @@ class SComplainPage extends StatelessWidget {
                               padding: const EdgeInsets.only(left: 8, right: 8),
                               child: Column(
                                 children: [
-                                  Card(
+                              Slidable(
+                              endActionPane: ActionPane(
+                              motion: const BehindMotion(),
+                              children: [
+                                SlidableAction(
+                                  backgroundColor: Colors.red,
+                                  icon: Icons.delete,
+                                  label: "Delete",
+                                  onPressed: (context) {
+                                    final docuser = FirebaseFirestore
+                                        .instance
+                                        .collection('Complain')
+                                        .doc(snapshot.data!.docs[i]
+                                    ['title']);
+                                    docuser.delete();
+                                  },
+                                )
+                              ],
+                            ),
+                                 child: Card(
                                     child: ListTile(
                                       leading: CircleAvatar(
                                         radius: 40,
                                         backgroundColor: Colors.white,
                                         child: ClipOval(
-                                          child: Image(image: AssetImage("assest/complain.jpg"),
+                                          child: Image(image: NetworkImage(snapshot.data!.docs[i]['photo']),
                                             fit: BoxFit.cover,
                                             height: 55,
                                             width: 55,
@@ -84,7 +104,7 @@ class SComplainPage extends StatelessWidget {
                                                         child: ClipOval(
                                                             child: FullScreenWidget(
                                                               child: Image(
-                                                          image: AssetImage("assest/complain.jpg"),
+                                                          image: NetworkImage(snapshot.data!.docs[i]['photo']),
                                                                 // snapshot.data!
                                                                 //         .docs[i][
                                                                 //     'userimage']),
@@ -190,7 +210,7 @@ class SComplainPage extends StatelessWidget {
                                         );
                                       },
                                     ),
-                                  ),
+                                  ),)
                                 ],
                               ),
                             ),

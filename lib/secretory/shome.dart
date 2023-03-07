@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:practice/CategoryScreen.dart';
 import 'package:practice/secretory/Drawer/SExpense.dart';
-
+import 'package:practice/secretory/Drawer/sevents.dart';
+import 'package:practice/secretory/Drawer/snews.dart';
 import 'package:practice/secretory/Drawer/scomplain.dart';
 import 'package:practice/secretory/Drawer/scontacts.dart';
 import 'package:practice/secretory/Drawer/sdashboard.dart';
@@ -28,6 +29,10 @@ class _SHomePageState extends State<SHomePage> {
       container = SExpense();
     } else if (currentPage == DrawerSections.complain) {
       container = SComplainPage();
+    } else if (currentPage == DrawerSections.News) {
+      container = SNewsPage();
+    } else if (currentPage == DrawerSections.event) {
+      container = SEventsPage();
     }
 
     return SafeArea(
@@ -84,8 +89,12 @@ class _SHomePageState extends State<SHomePage> {
               currentPage == DrawerSections.dashboard ? true : false),
           menuItem(2, "Expense", Icons.money,
               currentPage == DrawerSections.dashboard ? true : false),
-          menuItem(3, "Online Complain", Icons.headset_mic,
+          menuItem(3, "Complains", Icons.headset_mic,
               currentPage == DrawerSections.complain ? true : false),
+          menuItem(4, "News", Icons.newspaper,
+              currentPage == DrawerSections.News ? true : false),
+          menuItem(5, "Events", Icons.event,
+              currentPage == DrawerSections.event ? true : false),
           ElevatedButton(
               onPressed: () {
                 FirebaseAuth.instance.signOut().then((value) {
@@ -116,6 +125,10 @@ class _SHomePageState extends State<SHomePage> {
               currentPage = DrawerSections.expense;
             } else if (id == 3) {
               currentPage = DrawerSections.complain;
+            } else if (id == 4) {
+              currentPage = DrawerSections.News;
+            } else if (id == 5) {
+              currentPage = DrawerSections.event;
             }
           });
         },
@@ -151,6 +164,5 @@ class _SHomePageState extends State<SHomePage> {
 enum DrawerSections {
   dashboard,
   expense,
-  complain,
-
+  complain, News, event,
 }

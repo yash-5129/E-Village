@@ -2,8 +2,10 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import '../home.dart';
 import 'package:intl/intl.dart';
@@ -21,15 +23,32 @@ class _ComplainState extends State<Complain> {
   final _firestore = FirebaseFirestore.instance;
   var user = FirebaseAuth.instance.currentUser;
   final currentuser = FirebaseAuth.instance;
-
   final _auth = FirebaseAuth.instance;
-  late String name;
-  late String address;
-  late String email;
-  late String pass;
-  late String member;
-  late String phone;
-  File? pickedImage;
+  File? imageFile;
+
+  void _getFromCamera() async {
+    XFile? pickedFile =
+        await ImagePicker().pickImage(source: ImageSource.camera);
+    _cropImage(pickedFile!.path);
+    Navigator.pop(context);
+  }
+
+  void _getFromGallery() async {
+    XFile? pickedFile =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
+    _cropImage(pickedFile!.path);
+    Navigator.pop(context);
+  }
+
+  void _cropImage(filePath) async {
+    CroppedFile? croppedImage = await ImageCropper()
+        .cropImage(sourcePath: filePath, maxHeight: 1080, maxWidth: 1080);
+    if (croppedImage != null) {
+      setState(() {
+        imageFile = File(croppedImage.path);
+      });
+    }
+  }
 
   void imagePickerOption() {
     Get.bottomSheet(
@@ -56,18 +75,15 @@ class _ComplainState extends State<Complain> {
                     height: 20,
                   ),
                   ElevatedButton.icon(
-                    onPressed: () {
-                      pickImage(ImageSource.camera);
+                    onPressed: () async {
+                      _getFromCamera();
                     },
-                    icon: const Icon(Icons.camera),
+                    icon: const Icon(Icons.image),
                     label: const Text("CAMERA"),
                   ),
-                  const SizedBox(
-                    height: 8,
-                  ),
                   ElevatedButton.icon(
-                    onPressed: () {
-                      pickImage(ImageSource.gallery);
+                    onPressed: () async {
+                      _getFromGallery();
                     },
                     icon: const Icon(Icons.image),
                     label: const Text("GALLERY"),
@@ -91,125 +107,211 @@ class _ComplainState extends State<Complain> {
     );
   }
 
-  pickImage(ImageSource imageType) async {
-    try {
-      final photo = await ImagePicker().pickImage(source: imageType);
-      if (photo == null) return;
-      final tempImage = File(photo.path);
-      setState(() {
-        pickedImage = tempImage;
-      });
-
-      Get.back();
-    } catch (error) {
-      debugPrint(error.toString());
-    }
-  }
-
   Widget build(BuildContext context) {
     TextEditingController complaint_title = TextEditingController();
+    TextEditingController Phone_no = TextEditingController();
     TextEditingController complaint_description = TextEditingController();
     String datetime = (DateFormat.Md('en_US').add_jm().format(DateTime.now()));
+    String imageurl =
+        "https://firebasestorage.googleapis.com/v0/b/my-village-7348c.appspot.com/o/Complain%2Fcomplain.png?alt=media&token=2d178ce6-a48f-4f34-8208-493b8b657cdb";
 
     void add_data() async {
       FirebaseFirestore firestore = FirebaseFirestore.instance;
 
       String title = complaint_title.text.trim();
       String description = complaint_description.text.trim();
+      String Phone = Phone_no.text.trim();
 
       complaint_description.clear();
       complaint_title.clear();
+      Phone_no.clear();
 
-      if (title != '' && description != '') {
-        firestore.collection('Complain').add({
-          "email": user!.email,
-          "title": title,
-          "Desc": description,
-          "time": datetime
-        }).then((result) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text("Complained Successfully"),
-            backgroundColor: Colors.blue,
-          ));
-        }).catchError((onError) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text(onError),
-            backgroundColor: Colors.blue,
-          ));
-        });
-      }
+      firestore.collection('Complain').doc(title).set({
+        "email": user!.email,
+        "Phoneno": Phone,
+        "title": title,
+        "photo": imageurl,
+        "Desc": description,
+        "time": datetime
+      }).then((result) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text("Complained Successfully"),
+          backgroundColor: Colors.blue,
+        ));
+      }).catchError((onError) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(onError),
+          backgroundColor: Colors.blue,
+        ));
+      });
     }
 
     return Scaffold(
-        backgroundColor: Colors.white,
         body: Padding(
-          padding: const EdgeInsets.all(20.0),
+      padding: const EdgeInsets.all(20.0),
+      child: Form(
+        key: _formkey,
+        child: SingleChildScrollView(
           child: Column(
             children: [
               Stack(
                 children: [
                   Container(
+                    margin: EdgeInsets.only(left:0),
                     decoration: BoxDecoration(
                         border: Border.all(
-                            color: Colors.grey,
+                            color: Colors.blueGrey,
                             style: BorderStyle.solid,
                             width: 2),
-                        borderRadius: BorderRadius.circular(20)),
+                        borderRadius: (BorderRadius.circular(20))),
                     height: 200,
                     width: 250,
-                    child: Image(
-                      image: AssetImage("assest/complain.png"),
-                      fit: BoxFit.cover,
-                      color: Colors.blue,
-                    ),
+                    child: imageFile != null
+                        ?  Container(
+                      decoration: BoxDecoration(
+                        image: DecorationImage(image:  FileImage(imageFile!),fit: BoxFit.cover,),
+                        borderRadius: (BorderRadius.circular(18)
+                        ),
+                      ),
+                    )
+                        :  Container(
+                      decoration: BoxDecoration(
+                        image: DecorationImage(image:  NetworkImage(imageurl),fit: BoxFit.cover,),
+                        borderRadius: (BorderRadius.circular(18)
+                        ),
+                      ),
+                    )
                   ),
-                  Positioned(
-                    bottom: 0,
-                    right: 5,
-                    child: IconButton(
+                    IconButton(
+                      padding: const EdgeInsets.only(left: 210,top: 160),
                       onPressed: imagePickerOption,
-                      icon: const Icon(
-                        Icons.add_a_photo_outlined,
-                        color: Colors.black,
-                        size: 30,
+                        icon: const Icon(
+                          Icons.add_a_photo_outlined,
+                          color: Colors.black,
+                          size: 30,
+
                       ),
                     ),
-                  )
+
                 ],
               ),
-
               SizedBox(
                 height: 15,
               ),
               Padding(
-                padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
+                padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
                 child: SizedBox(
                   width: 350,
                   // height: 300,
-                  child: TextField(
+                  child: TextFormField(
                     controller: complaint_title,
+                    style: TextStyle(
+                      color: Theme.of(context).primaryColor,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 22,
+                    ),
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return '* Required';
+                      }
+                    },
                     decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                            borderSide: BorderSide(
+                                width: 2, color: Colors.blueGrey),
+                            borderRadius: BorderRadius.circular(20.0)),
+                        enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                                width: 1.5, color: Colors.blueGrey),
+                            borderRadius: BorderRadius.circular(20.0)),
+                        prefixIcon: Icon(Icons.info),
                         labelText: "Complain Title",
-                        filled: true,
-                        fillColor: Colors.grey[200],
-                        border:
-                            OutlineInputBorder(borderSide: BorderSide.none)),
+                        labelStyle: TextStyle(
+                          fontSize: 18,
+                          color: Colors.grey[400],
+                          fontWeight: FontWeight.w800,
+                        )),
                   ),
                 ),
               ),
+              SizedBox(height: 4,),
               SizedBox(
                 // height: 200,
                 width: 350,
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
-                  child: TextField(
+                  child: TextFormField(
+                    minLines: 2, // any number you need (It works as the rows for the textarea)
+                    keyboardType: TextInputType.multiline,
+                    maxLines: null,
                     controller: complaint_description,
+                    style: TextStyle(
+                      color: Theme.of(context).primaryColor,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 22,
+                    ),
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return '* Required';
+                      }
+                    },
                     decoration: InputDecoration(
-                        labelText: "Enter Your Concern Here!!!",
-                        filled: true,
-                        fillColor: Colors.grey[200],
-                        border:
-                            OutlineInputBorder(borderSide: BorderSide.none)),
+                        border: OutlineInputBorder(
+                            borderSide: BorderSide(
+                                width: 2, color: Colors.blueGrey),
+                            borderRadius: BorderRadius.circular(20.0)),
+                        enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                                width: 1.5, color: Colors.blueGrey),
+                            borderRadius: BorderRadius.circular(20.0)),
+                        prefixIcon: Icon(Icons.comment),
+                        labelText: "Enter Your Concern Here !!!",
+                        labelStyle: TextStyle(
+                          fontSize: 18,
+                          color: Colors.grey[400],
+                          fontWeight: FontWeight.w800,
+                        )),
+                  ),
+                ),
+              ),
+              SizedBox(height: 4,),
+
+              SizedBox(
+                // height: 200,
+                width: 350,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+                  child: TextFormField(
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return '* Required';
+                      } else if (value.length != 10) {
+                        return '*Phone number must be of 10 digits';
+                      }
+                    },
+                    controller: Phone_no,
+                    keyboardType: TextInputType.number,
+                    style: TextStyle(
+                      color: Theme.of(context).primaryColor,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 22,
+                    ),
+                    decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                            borderSide: BorderSide(
+                                width: 2, color: Colors.blueGrey),
+                            borderRadius: BorderRadius.circular(20.0)),
+                        enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                                width: 1.5, color: Colors.blueGrey),
+                            borderRadius: BorderRadius.circular(20.0)),
+                        prefixIcon: Icon(Icons.phone),
+                        labelText: "Phone number",
+                        labelStyle: TextStyle(
+                          fontSize: 18,
+                          color: Colors.grey[400],
+                          fontWeight: FontWeight.w800,
+                        )),
                   ),
                 ),
               ),
@@ -223,7 +325,23 @@ class _ComplainState extends State<Complain> {
                         primary: Colors.blue,
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20))),
-                    onPressed: () {
+                    onPressed: () async {
+                      if (!_formkey.currentState!.validate()) {
+                        return;
+                      }
+                      String im = imageFile.toString();
+                      int imm = im.lastIndexOf('/');
+                      String imgg = im.substring(imm + 1);
+                      final ref = FirebaseStorage.instance
+                          .ref()
+                          .child('Complain')
+                          .child(imgg);
+                      try {
+                        await ref.putFile(imageFile!);
+                        imageurl = await ref.getDownloadURL();
+                      } catch (error) {
+                        print("error in photo");
+                      }
                       add_data();
                       Navigator.push(context,
                           MaterialPageRoute(builder: (context) => HomePage()));
@@ -237,6 +355,8 @@ class _ComplainState extends State<Complain> {
               ),
             ],
           ),
-        ));
+        ),
+      ),
+    ));
   }
 }
